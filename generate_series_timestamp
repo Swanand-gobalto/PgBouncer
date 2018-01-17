@@ -1,0 +1,15 @@
+CREATE OR REPLACE FUNCTION generate_series_timestamp(startdate timestamp without time zone, enddate timestamp without time zone , intrvl text)
+RETURNS SETOF timestamp without time zone AS $$
+from datetime import datetime, timedelta
+result = [] 
+result.append(startdate)
+a = datetime.strptime(startdate, '%Y-%m-%d %H:%M:%S')
+b = datetime.strptime(enddate, '%Y-%m-%d %H:%M:%S')
+args = dict(e.split('=') for e in intrvl.split(','))
+args_with_ints = dict((k,int(v)) for k,v in args.iteritems())
+defined_period = timedelta(**args_with_ints)
+while a < b:
+      a = a + defined_period
+      result.append(a)
+return result
+$$ LANGUAGE plpythonu;
